@@ -50,6 +50,11 @@
 	[self.view addSubview:_paginator];
 }
 
+- (void)viewDidUnload {
+	[super viewDidUnload];
+	[_paginator removeFromSuperview];
+}
+
 
 #pragma mark - Private
 
