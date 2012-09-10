@@ -42,6 +42,14 @@
 	return self;
 }
 
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+  if ((self = [super initWithCoder:aDecoder])){
+    [self _initialize];
+	}
+	return self;
+}
+
 
 - (void)viewDidLoad {
 	[super viewDidLoad];
@@ -53,6 +61,11 @@
 - (void)viewDidUnload {
 	[super viewDidUnload];
 	[_paginator removeFromSuperview];
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+	[super viewWillAppear:animated];
+	//[_paginator reloadData];
 }
 
 
