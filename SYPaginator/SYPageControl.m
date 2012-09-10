@@ -9,7 +9,7 @@
 #import "SYPageControl.h"
 #import "NSBundle+SYPaginator.h"
 
-static NSInteger const kSYPageControlMaxNumberOfDots = 12;
+static NSInteger const kSYPageControlMaxNumberOfDots = 0;
 
 @interface SYPageControl ()
 - (void)_updateTextLabel;
