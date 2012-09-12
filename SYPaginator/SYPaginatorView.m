@@ -39,6 +39,8 @@
 @synthesize swipeableRect = _swipeableRect;
 @synthesize currentPageIndex = _currentPageIndex;
 @synthesize paginationDirection = _paginationDirection;
+@synthesize scrollingLocked = _scrollingLocked;
+
 
 - (void)setCurrentPageIndex:(NSInteger)targetPage {
 	[self setCurrentPageIndex:targetPage animated:NO];
@@ -445,6 +447,15 @@
 #pragma mark - UIScrollViewDelegate
 
 - (void)scrollViewDidScroll:(UIScrollView *)sender {
+  
+  // scrolling is locked when the device is rotating
+  // updating the current page while rotating the device will return an incorrect index
+  // this is because the content offset gets adjusted to compensate for the content size change coming
+  if (self.scrollingLocked)
+  {
+    return;
+  }
+  
 	if (_pageControlUsed) {
 		return;
 	}
@@ -458,7 +469,7 @@
 		pageIndex = floor((_scrollView.contentOffset.y - pageHeight / 2) / pageHeight) + 1;
 	}
 	
-	[self _setCurrentPageIndex:pageIndex animated:NO scroll:NO forcePreload:NO];
+  [self _setCurrentPageIndex:pageIndex animated:NO scroll:NO forcePreload:NO];
 }
 
 
@@ -469,7 +480,6 @@
 	
 	_pageControlUsed = NO;
 }
-
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
 	if (_delegate && [_delegate respondsToSelector:@selector(paginatorView:didScrollToPageAtIndex:)]) {

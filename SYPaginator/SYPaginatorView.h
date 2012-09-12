@@ -46,6 +46,7 @@ typedef enum {
 @property (nonatomic, assign) NSInteger numberOfPagesToPreload;
 @property (nonatomic, assign) CGRect swipeableRect;
 @property (nonatomic, assign) SYPageViewPaginationDirection paginationDirection;
+@property (nonatomic, assign) BOOL scrollingLocked;
 
 - (void)reloadData;
 - (void)reloadDataRemovingCurrentPage:(BOOL)removeCurrentPage;
