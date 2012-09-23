@@ -50,6 +50,7 @@ typedef enum {
 
 - (void)reloadData;
 - (void)reloadDataRemovingCurrentPage:(BOOL)removeCurrentPage;
+- (void)reloadDataRemovingCurrentPage:(BOOL)removeCurrentPage withSelectedIndex:(NSInteger)index;
 - (void)setCurrentPageIndex:(NSInteger)targetPage animated:(BOOL)animated;
 - (CGRect)frameForPageAtIndex:(NSInteger)page;
 - (SYPageView *)pageForIndex:(NSInteger)page;

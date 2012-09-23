@@ -154,9 +154,13 @@
 	[self reloadDataRemovingCurrentPage:YES];
 }
 
-
 - (void)reloadDataRemovingCurrentPage:(BOOL)removeCurrentPage {
-	[self _resetScrollViewContentSize];
+	[self reloadDataRemovingCurrentPage:removeCurrentPage withSelectedIndex:self.currentPageIndex];
+}
+
+- (void)reloadDataRemovingCurrentPage:(BOOL)removeCurrentPage withSelectedIndex:(NSInteger)index
+{
+  [self _resetScrollViewContentSize];
 	
 	NSInteger numberOfPages = [self numberOfPages];
 	_pageControl.numberOfPages = numberOfPages;
@@ -164,7 +168,7 @@
 	// Remove views
 	NSMutableArray *keysToRemove = [[NSMutableArray alloc] init];
 	[_pages enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-		if (!removeCurrentPage && [key integerValue] == self.currentPageIndex) {
+		if (!removeCurrentPage && [key integerValue] == index) {
 			return;
 		}
 		
@@ -174,7 +178,7 @@
 	[_pages removeObjectsForKeys:keysToRemove];
 	
 	// Reload current page
-	NSUInteger newIndex = self.currentPageIndex;
+	NSUInteger newIndex = index;
 	if (newIndex >= numberOfPages) {
 		newIndex = numberOfPages - 1;
 	}
