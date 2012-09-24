@@ -152,15 +152,6 @@
 	}
 }
 
-
-- (void)willMoveToSuperview:(UIView *)newSuperview {
-	[super willMoveToSuperview:newSuperview];
-	if (!newSuperview) {
-		[self _cleanup];
-	}
-}
-
-
 #pragma mark - Managing data
 
 - (void)reloadData {
