@@ -129,6 +129,11 @@
 		UIView *view = [_pages objectForKey:key];
 		view.frame = [self frameForPageAtIndex:key.integerValue];
 	}
+	
+	// Since the location of the current page will likely change during an orientation change (and since this is called
+	// within the animation block during said change) setting the page index will assure all the necessary offsets
+	// are calculated and assigned for the new view bounds
+	[self setCurrentPageIndex:self.currentPageIndex];
 }
 
 
@@ -139,6 +144,14 @@
 	}
 	return [super pointInside:point withEvent:event];
 }
+
+- (void)willMoveToSuperview:(UIView *)newSuperview {
+	[super willMoveToSuperview:newSuperview];
+	if (!newSuperview) {
+		[self _cleanup];
+	}
+}
+
 
 - (void)willMoveToSuperview:(UIView *)newSuperview {
 	[super willMoveToSuperview:newSuperview];
@@ -423,6 +436,10 @@
 		
 		[self _loadPage:targetPage];
 		[self _loadPagesToPreloadAroundPageAtIndex:targetPage];
+        
+        if(_delegate && [_delegate respondsToSelector:@selector(paginatorView:willDisplayView:atIndex:)]){
+            [_delegate paginatorView:self willDisplayView:[self pageForIndex:targetPage] atIndex:targetPage];
+        }
 	}
 	
 	if (scroll) {
