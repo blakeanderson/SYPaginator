@@ -181,6 +181,10 @@
 		if (!removeCurrentPage && [key integerValue] == index) {
             newIndex = [key integerValue];
             currentPage = obj;
+      if (index != newCurrentIndex){
+        [obj removeFromSuperview];
+        [keysToRemove addObject:key];
+      }
 			return;
 		}
 		
@@ -189,7 +193,7 @@
 	}];
 	[_pages removeObjectsForKeys:keysToRemove];
     if (newIndex >= 0){
-        [_pages setObject:currentPage forKey:[NSNumber numberWithInt:newIndex]];
+        [_pages setObject:currentPage forKey:[NSNumber numberWithInt:newCurrentIndex]];
     }
 	// Reload current page
 	if (newCurrentIndex >= numberOfPages) {
@@ -299,7 +303,13 @@
 			
 			[self _reusePages];
 		}
-	}
+	} else {
+    if (view) {
+      [_scrollView addSubview:view];
+			view.frame = [self frameForPageAtIndex:page];
+			[self _reusePages];
+		}
+  }
 }
 
 
