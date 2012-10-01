@@ -170,6 +170,7 @@
 {
   [self _resetScrollViewContentSize];
 	
+  __block BOOL backfill = NO;
 	NSInteger numberOfPages = [self numberOfPages];
 	_pageControl.numberOfPages = numberOfPages;
 	
@@ -184,6 +185,7 @@
       if (index != newCurrentIndex){
         [obj removeFromSuperview];
         [keysToRemove addObject:key];
+        backfill = YES;
       }
 			return;
 		}
@@ -200,15 +202,13 @@
 		newCurrentIndex = numberOfPages - 1;
 	}
 	
-	[self _setCurrentPageIndex:newCurrentIndex animated:NO scroll:YES forcePreload:YES];
+	[self _setCurrentPageIndex:newCurrentIndex animated:NO scroll:YES forcePreload:YES pageBackfill:backfill];
 }
-
 
 - (void)setCurrentPageIndex:(NSInteger)targetPage animated:(BOOL)animated {
 	_pageSetViaPublicMethod = YES;
 	[self _setCurrentPageIndex:targetPage animated:animated scroll:YES forcePreload:NO];
 }
-
 
 - (CGRect)frameForPageAtIndex:(NSInteger)page {
 	CGSize size = _scrollView.frame.size;
@@ -287,6 +287,10 @@
 
 
 - (void)_loadPage:(NSInteger)page {
+	[self _loadPageTargeted:page targeted:NO];
+}
+
+- (void)_loadPageTargeted:(NSInteger)page targeted:(BOOL)targeted {
 	if (page < 0 || page >= self.numberOfPages) {
 		return;
 	}
@@ -304,7 +308,7 @@
 			[self _reusePages];
 		}
 	} else {
-    if (view) {
+    if (view && targeted) {
       [_scrollView addSubview:view];
 			view.frame = [self frameForPageAtIndex:page];
 			[self _reusePages];
@@ -423,8 +427,11 @@
 	}
 }
 
-
 - (void)_setCurrentPageIndex:(NSInteger)targetPage animated:(BOOL)animated scroll:(BOOL)scroll forcePreload:(BOOL)forcePreload {
+  [self _setCurrentPageIndex:targetPage animated:animated scroll:scroll forcePreload:forcePreload pageBackfill:NO];
+}
+
+- (void)_setCurrentPageIndex:(NSInteger)targetPage animated:(BOOL)animated scroll:(BOOL)scroll forcePreload:(BOOL)forcePreload pageBackfill:(BOOL)pageBackfill {
 	if (_currentPageIndex == targetPage && _pageSetViaPublicMethod != YES) {
 		return;
 	}
@@ -444,7 +451,8 @@
 		_currentPageIndex = targetPage;
 		_pageControl.currentPage = (NSInteger)targetPage;
 		
-		[self _loadPage:targetPage];
+    [self _loadPageTargeted:targetPage targeted:pageBackfill];
+		
 		[self _loadPagesToPreloadAroundPageAtIndex:targetPage];
         
         if(_delegate && [_delegate respondsToSelector:@selector(paginatorView:willDisplayView:atIndex:)]){
